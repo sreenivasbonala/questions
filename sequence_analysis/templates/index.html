@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Sequence Analysis Results</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 30px;
+            background-color: #f4f8fb;
+        }
+
+        h1 {
+            color: #1f4e79;
+        }
+
+        form, table {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        input, textarea, button {
+            width: 100%;
+            margin: 8px 0;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+
+        button {
+            background-color: #1f4e79;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            border-bottom: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #1f4e79;
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+
+<h1>Bioinformatics Sequence Analysis Results</h1>
+
+<form id="resultForm">
+    <h2>Add Sequence Analysis Result</h2>
+
+    <input type="text" id="sequence_id" placeholder="Sequence ID" required>
+
+    <input type="text" id="organism" placeholder="Organism" required>
+
+    <textarea id="sequence" placeholder="DNA/RNA Sequence" required></textarea>
+
+    <textarea id="analysis_result" placeholder="Analysis Result" required></textarea>
+
+    <button type="submit">Save Result</button>
+</form>
+
+<button onclick="loadResults()">View Analysis Results</button>
+
+<table>
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Sequence ID</th>
+            <th>Organism</th>
+            <th>Sequence</th>
+            <th>Analysis Result</th>
+        </tr>
+    </thead>
+
+    <tbody id="resultTable"></tbody>
+</table>
+
+<script>
+document.getElementById("resultForm").addEventListener("submit", function(event) {
+    event.preventDefault();
+
+    const data = {
+        sequence_id: document.getElementById("sequence_id").value,
+        organism: document.getElementById("organism").value,
+        sequence: document.getElementById("sequence").value,
+        analysis_result: document.getElementById("analysis_result").value
+    };
+
+    fetch("/api/results", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(data)
+    })
+    .then(response => response.json())
+    .then(result => {
+        alert(result.message);
+        document.getElementById("resultForm").reset();
+        loadResults();
+    });
+});
+
+
+function loadResults() {
+    fetch("/api/results")
+    .then(response => response.json())
+    .then(data => {
+        const resultTable = document.getElementById("resultTable");
+        resultTable.innerHTML = "";
+
+        data.forEach(result => {
+            const row = document.createElement("tr");
+
+            row.innerHTML = `
+                <td>${result.id}</td>
+                <td>${result.sequence_id}</td>
+                <td>${result.organism}</td>
+                <td>${result.sequence}</td>
+                <td>${result.analysis_result}</td>
+            `;
+
+            resultTable.appendChild(row);
+        });
+    });
+}
+
+loadResults();
+</script>
+
+</body>
+</html>

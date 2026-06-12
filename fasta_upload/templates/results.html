@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Analysis Results</title>
+</head>
+<body>
+
+<h2>FASTA Analysis Results</h2>
+
+<table border="1" cellpadding="8">
+
+    <tr>
+        <th>ID</th>
+        <th>Filename</th>
+        <th>Sequence Count</th>
+        <th>Total Sequence Length</th>
+        <th>GC Content (%)</th>
+    </tr>
+
+    {% for row in results %}
+    <tr>
+        <td>{{ row.id }}</td>
+        <td>{{ row.filename }}</td>
+        <td>{{ row.sequence_count }}</td>
+        <td>{{ row.sequence_length }}</td>
+        <td>{{ "%.2f"|format(row.gc_content) }}</td>
+    </tr>
+    {% endfor %}
+
+</table>
+
+<br>
+
+<a href="/upload">Upload Another File</a>
+<br><br>
+
+<a href="/logout">Logout</a>
+
+</body>
+</html>

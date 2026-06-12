@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Course Registration System</title>
+</head>
+
+<body>
+
+<h1>Course Registration System</h1>
+
+<input type="number" id="id" placeholder="Registration ID">
+
+<input type="text" id="student_name" placeholder="Student Name">
+
+<input type="text" id="course_name" placeholder="Course Name">
+
+<input type="email" id="email" placeholder="Email">
+
+<input type="text" id="semester" placeholder="Semester">
+
+<button onclick="addRegistration()">Add Registration</button>
+
+<button onclick="loadRegistrations()">View Registrations</button>
+
+<button onclick="updateRegistration()">Update Registration</button>
+
+<button onclick="deleteRegistration()">Delete Registration</button>
+
+<ul id="registrationList"></ul>
+
+<script>
+
+function addRegistration() {
+
+    const id =
+        document.getElementById("id").value;
+
+    const student_name =
+        document.getElementById("student_name").value;
+
+    const course_name =
+        document.getElementById("course_name").value;
+
+    const email =
+        document.getElementById("email").value;
+
+    const semester =
+        document.getElementById("semester").value;
+
+    fetch('/registrations', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            id,
+            student_name,
+            course_name,
+            email,
+            semester
+        })
+    })
+
+    .then(response => response.text())
+
+    .then(data => {
+        alert(data);
+    });
+}
+
+
+function loadRegistrations() {
+
+    fetch('/registrations')
+
+    .then(response => response.json())
+
+    .then(data => {
+
+        const registrationList =
+            document.getElementById("registrationList");
+
+        registrationList.innerHTML = "";
+
+        data.forEach(reg => {
+
+            const li =
+                document.createElement("li");
+
+            li.textContent =
+                reg.id + " | " +
+                reg.student_name + " | " +
+                reg.course_name + " | " +
+                reg.email + " | " +
+                reg.semester;
+
+            registrationList.appendChild(li);
+        });
+    });
+}
+
+
+function updateRegistration() {
+
+    const id =
+        document.getElementById("id").value;
+
+    const student_name =
+        document.getElementById("student_name").value;
+
+    const course_name =
+        document.getElementById("course_name").value;
+
+    const email =
+        document.getElementById("email").value;
+
+    const semester =
+        document.getElementById("semester").value;
+
+    fetch('/registrations/' + id, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            student_name,
+            course_name,
+            email,
+            semester
+        })
+    })
+
+    .then(response => response.text())
+
+    .then(data => {
+        alert(data);
+    });
+}
+
+
+function deleteRegistration() {
+
+    const id =
+        document.getElementById("id").value;
+
+    fetch('/registrations/' + id, {
+        method: 'DELETE'
+    })
+
+    .then(response => response.text())
+
+    .then(data => {
+        alert(data);
+    });
+}
+
+</script>
+
+</body>
+</html>
